@@ -4,21 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WC2026 Sweepstakes — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header class="page-header">
+<header class="site-header">
   <div class="container">
-    <div class="inner">
-      <div class="site-title">
-        <span class="trophy">⚙️</span>
-        Admin Panel
+    <div class="header-inner">
+      <div>
+        <div class="site-title">ADMIN PANEL</div>
+        <div class="site-meta">// AUTHORISED ACCESS ONLY //</div>
       </div>
       <nav class="nav-links">
-        <a href="index.html">Leaderboard</a>
-        <a href="draw.html">Draw</a>
-        <a href="admin.html">Admin</a>
+        <a href="index.html">LEADERBOARD</a>
+        <a href="draw.html">DRAW</a>
+        <a href="admin.html">ADMIN</a>
       </nav>
     </div>
   </div>
@@ -28,57 +30,51 @@
 
   <!-- Auth gate -->
   <div class="auth-gate" id="auth-gate">
-    <h2>🔐 Admin Access</h2>
+    <h2>🔐 ADMIN ACCESS</h2>
     <p class="muted">Enter your admin password to continue.</p>
     <div class="input-row">
       <input type="password" id="pwd-input" placeholder="Password">
-      <button class="btn btn--green" id="auth-btn">Enter</button>
+      <button class="btn" id="auth-btn">ENTER</button>
     </div>
     <div id="auth-error"></div>
   </div>
 
-  <!-- Admin content (hidden until auth) -->
+  <!-- Admin content -->
   <div id="admin-content" style="display:none">
 
     <div id="admin-msg" style="display:none"></div>
 
     <!-- Step 1: Players -->
-    <div class="card" style="margin-bottom:24px">
-      <div class="section-title">Step 1 — Enter Player Names</div>
-      <p class="muted" style="margin-bottom:16px">Enter all 16 players. Saving replaces previous names (only do this before the draw starts).</p>
-      <div class="player-inputs-grid" id="player-inputs">
-        <!-- Populated by admin.js -->
-      </div>
+    <div class="panel">
+      <div class="panel-title">STEP 1 — PLAYER NAMES</div>
+      <p class="muted" style="margin-bottom:16px;font-size:.78rem">Enter all 16 players. Save before running the draw.</p>
+      <div class="player-inputs-grid" id="player-inputs"></div>
       <div style="margin-top:16px">
-        <button class="btn btn--green" id="save-players-btn">Save Players</button>
+        <button class="btn" id="save-players-btn">SAVE PLAYERS</button>
       </div>
     </div>
 
-    <!-- Step 2: Run the draw -->
-    <div class="card" style="margin-bottom:24px">
-      <div class="section-title">Step 2 — Run the Draw</div>
-      <p class="muted" style="margin-bottom:16px">
-        Once players are saved, go to the <a href="draw.html">Draw page</a> and enter the admin password there.
-        The draw page can be shared with everyone to watch live!
+    <!-- Step 2: Draw -->
+    <div class="panel">
+      <div class="panel-title">STEP 2 — RUN THE DRAW</div>
+      <p class="muted" style="margin-bottom:16px;font-size:.78rem">
+        Once players are saved, go to the draw page. Share the link so everyone can watch live.
       </p>
-      <a href="draw.html" class="btn btn--gold">Go to Draw Page →</a>
+      <a href="draw.html" class="btn">GO TO DRAW PAGE →</a>
     </div>
 
     <!-- Step 3: Special prizes -->
-    <div class="card" style="margin-bottom:24px">
-      <div class="section-title">Step 3 — Special Prizes</div>
-      <p class="muted" style="margin-bottom:16px">
-        Award these manually at the right moment during the tournament.
-        Wooden Spoon and Beautiful Loser are also auto-computed from API data — use this to lock in the official winner.
-      </p>
+    <div class="panel">
+      <div class="panel-title">STEP 3 — SPECIAL PRIZES</div>
+      <p class="muted" style="margin-bottom:16px;font-size:.78rem">Award manually at the right moment. Wooden Spoon and Beautiful Loser are also auto-computed.</p>
       <div id="special-prizes-container">Loading...</div>
     </div>
 
     <!-- Danger zone -->
-    <div class="card danger-zone" style="margin-bottom:40px">
-      <div class="section-title">Danger Zone</div>
-      <p class="muted" style="margin-bottom:16px">This deletes all players, draw assignments, and special prizes. Only use this before the draw.</p>
-      <button class="btn btn--danger" id="reset-btn">Reset All Data</button>
+    <div class="panel danger-zone">
+      <div class="panel-title">⚠ DANGER ZONE</div>
+      <p class="muted" style="margin-bottom:16px;font-size:.78rem">Deletes all players, assignments and prizes. Only use before the draw.</p>
+      <button class="btn btn--danger" id="reset-btn">RESET ALL DATA</button>
     </div>
 
   </div>
@@ -90,6 +86,5 @@
 <script src="js/teams.js"></script>
 <script src="js/db.js"></script>
 <script src="js/admin.js"></script>
-
 </body>
 </html>
