@@ -3,14 +3,31 @@
 let wheel;
 let players = [];
 let assignments = [];
-let drawOrder = []; // [{ player, tier }] for each remaining spin
+let drawOrder = [];
 let currentStepIndex = 0;
 let adminAuthed = false;
+
+// Web Audio beep on landing
+function playLandingBeep() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(440, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } catch (_) { /* audio not supported */ }
+}
 
 async function initDraw() {
   const canvas = document.getElementById('wheel-canvas');
   wheel = new SpinWheel(canvas);
-
   await loadDrawState();
   renderProgress();
   renderLog();
@@ -19,10 +36,10 @@ async function initDraw() {
 
 async function loadDrawState() {
   try {
-    players = await DB.getPlayers();
+    players     = await DB.getPlayers();
     assignments = await DB.getAssignments();
   } catch (e) {
-    showError('Database error: ' + e.message);
+    showStatus('Database error: ' + e.message, 'error');
     return;
   }
 
@@ -31,23 +48,17 @@ async function loadDrawState() {
     return;
   }
 
-  // Build remaining draw order
-  // For each player × tier, check if already assigned
   const assigned = new Set(assignments.map(a => `${a.player_id}_${a.tier}`));
   drawOrder = [];
-
   players.forEach(player => {
     [1, 2, 3].forEach(tier => {
-      if (!assigned.has(`${player.id}_${tier}`)) {
-        drawOrder.push({ player, tier });
-      }
+      if (!assigned.has(`${player.id}_${tier}`)) drawOrder.push({ player, tier });
     });
   });
-
-  currentStepIndex = 0; // always start from first unfinished step
+  currentStepIndex = 0;
 
   if (drawOrder.length === 0) {
-    showStatus('The draw is complete! 🎉 Check the <a href="index.html">leaderboard</a>.', 'success');
+    showStatus('DRAW COMPLETE — <a href="index.html">VIEW LEADERBOARD</a>', 'success');
     setWheelIdle();
   } else {
     loadWheelForCurrentStep();
@@ -55,9 +66,7 @@ async function loadDrawState() {
 }
 
 function getAssignedTeamsForTier(tier) {
-  return assignments
-    .filter(a => a.tier === tier)
-    .map(a => a.team_id);
+  return assignments.filter(a => a.tier === tier).map(a => a.team_id);
 }
 
 function getRemainingTeams(tier) {
@@ -68,26 +77,24 @@ function getRemainingTeams(tier) {
 function loadWheelForCurrentStep() {
   if (currentStepIndex >= drawOrder.length) return;
   const { tier } = drawOrder[currentStepIndex];
-  const remaining = getRemainingTeams(tier);
-  wheel.setTeams(remaining);
+  wheel.setTeams(getRemainingTeams(tier));
 }
 
-function setWheelIdle() {
-  wheel.setTeams([]);
-}
+function setWheelIdle() { wheel.setTeams([]); }
 
 function renderProgress() {
   const total = players.length * 3;
-  const done = assignments.length;
-  const pct = total ? Math.round((done / total) * 100) : 0;
+  const done  = assignments.length;
+  const pct   = total ? Math.round((done / total) * 100) : 0;
 
   document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('progress-text').textContent = `${done} / ${total} teams assigned`;
+  document.getElementById('progress-text').textContent = `${done} / ${total} TEAMS ASSIGNED`;
 
   if (currentStepIndex < drawOrder.length) {
     const { player, tier } = drawOrder[currentStepIndex];
-    document.getElementById('current-player').textContent = player.name;
-    document.getElementById('current-tier').textContent = `Tier ${tier} (${tierLabel(tier)})`;
+    document.getElementById('current-player').textContent = player.name.toUpperCase();
+    document.getElementById('current-tier').textContent   = `TIER ${tier} — ${tierLabel(tier).toUpperCase()}`;
+    document.getElementById('current-tier').className     = `tier-tag tier-tag--${tier}`;
     document.getElementById('current-info').style.display = 'block';
   } else {
     document.getElementById('current-info').style.display = 'none';
@@ -101,76 +108,67 @@ function renderLog() {
   const byPlayer = {};
   players.forEach(p => { byPlayer[p.id] = { name: p.name, teams: {} }; });
   assignments.forEach(a => {
-    if (byPlayer[a.player_id]) {
-      byPlayer[a.player_id].teams[a.tier] = getTeam(a.team_id);
-    }
+    if (byPlayer[a.player_id]) byPlayer[a.player_id].teams[a.tier] = getTeam(a.team_id);
   });
 
   log.innerHTML = players.map(p => {
-    const data = byPlayer[p.id];
+    const data  = byPlayer[p.id];
     const chips = [1, 2, 3].map(tier => {
       const t = data.teams[tier];
-      if (!t) return `<span class="chip chip--empty">T${tier}: ?</span>`;
-      return `<span class="chip chip--t${tier}">${t.flag} ${t.name}</span>`;
+      if (!t) return `<span class="chip chip--empty">T${tier}:?</span>`;
+      return `<span class="chip chip--t${tier}">${t.flag} ${t.tla}</span>`;
     }).join('');
-    const isDone = [1,2,3].every(tier => data.teams[tier]);
-    return `
-      <div class="log-row ${isDone ? 'log-row--done' : ''}">
-        <strong>${p.name}</strong>
-        <div class="chips">${chips}</div>
-      </div>`;
+    const done = [1,2,3].every(tier => data.teams[tier]);
+    return `<div class="log-row ${done ? 'log-row--done' : ''}">
+      <strong>${p.name.toUpperCase()}</strong>
+      <div class="chips">${chips}</div>
+    </div>`;
   }).join('');
 }
 
 function updateSpinBtn() {
-  const btn = document.getElementById('spin-btn');
+  const btn     = document.getElementById('spin-btn');
   const authRow = document.getElementById('auth-row');
+  const waiting = document.getElementById('waiting-msg');
 
   if (!adminAuthed) {
     authRow.style.display = 'flex';
-    btn.style.display = 'none';
+    btn.style.display     = 'none';
+    if (waiting) waiting.style.display = 'block';
     return;
   }
   authRow.style.display = 'none';
-  btn.style.display = 'block';
+  if (waiting) waiting.style.display = 'none';
+  btn.style.display     = 'block';
   btn.disabled = currentStepIndex >= drawOrder.length || wheel.spinning;
-  btn.textContent = currentStepIndex >= drawOrder.length ? 'Draw Complete!' : 'SPIN!';
+  btn.textContent = currentStepIndex >= drawOrder.length ? 'DRAW COMPLETE' : 'SPIN!';
 }
 
 async function doSpin() {
   if (currentStepIndex >= drawOrder.length) return;
   const { player, tier } = drawOrder[currentStepIndex];
   const remaining = getRemainingTeams(tier);
+  if (!remaining.length) { showStatus('No remaining teams for tier ' + tier, 'error'); return; }
 
-  if (!remaining.length) {
-    showError('No remaining teams for tier ' + tier);
-    return;
-  }
-
-  // Pick random team before animating
   const targetIndex = Math.floor(Math.random() * remaining.length);
-  const chosenTeam = remaining[targetIndex];
+  const chosen      = remaining[targetIndex];
 
-  // Save to DB immediately (before animation, so data is safe on refresh)
   try {
-    await DB.saveAssignment(player.id, chosenTeam.id, tier);
+    await DB.saveAssignment(player.id, chosen.id, tier);
   } catch (e) {
-    showError('Failed to save assignment: ' + e.message);
+    showStatus('Failed to save: ' + e.message, 'error');
     return;
   }
-
-  assignments.push({ player_id: player.id, team_id: chosenTeam.id, tier, players: { name: player.name } });
+  assignments.push({ player_id: player.id, team_id: chosen.id, tier, players: { name: player.name } });
 
   document.getElementById('spin-btn').disabled = true;
   await wheel.spin(targetIndex);
+  playLandingBeep();
 
-  // Show result banner
-  showResult(`${player.name} gets ${chosenTeam.flag} ${chosenTeam.name}!`);
-
+  showResult(`${player.name.toUpperCase()} GETS ${chosen.flag} ${chosen.name.toUpperCase()}!`);
   currentStepIndex++;
 
-  // Brief pause then load next
-  await sleep(1800);
+  await sleep(2000);
   clearResult();
 
   if (currentStepIndex < drawOrder.length) {
@@ -197,10 +195,8 @@ function checkAdminAuth() {
   }
 }
 
-// --- helpers ---
-function tierLabel(tier) {
-  return ['', 'Strong', 'Mid-tier', 'Underdog'][tier];
-}
+// ─── helpers ─────────────────────────────────────────────────────────
+function tierLabel(tier) { return ['', 'Strong', 'Mid-Tier', 'Underdog'][tier]; }
 
 function showStatus(html, type = 'info') {
   const el = document.getElementById('status-msg');
@@ -208,8 +204,6 @@ function showStatus(html, type = 'info') {
   el.className = `status-msg status-msg--${type}`;
   el.style.display = 'block';
 }
-
-function showError(msg) { showStatus(msg, 'error'); }
 
 function showResult(msg) {
   const el = document.getElementById('result-banner');
@@ -223,22 +217,14 @@ function clearResult() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// WhatsApp share link for live watching
 document.addEventListener('DOMContentLoaded', () => {
-  const shareBtn = document.getElementById('share-draw-btn');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      const url = encodeURIComponent(window.location.href);
-      const msg = encodeURIComponent('Watch the WC2026 sweepstakes draw live! 🎰⚽');
-      window.open(`https://wa.me/?text=${msg}%20${url}`, '_blank');
-    });
-  }
-
-  document.getElementById('admin-auth-btn').addEventListener('click', checkAdminAuth);
-  document.getElementById('admin-pwd-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkAdminAuth();
+  document.getElementById('share-draw-btn').addEventListener('click', () => {
+    const msg = encodeURIComponent('Watch the WC2026 sweepstakes draw LIVE 🎰⚽ ');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://wa.me/?text=${msg}${url}`, '_blank');
   });
+  document.getElementById('admin-auth-btn').addEventListener('click', checkAdminAuth);
+  document.getElementById('admin-pwd-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkAdminAuth(); });
   document.getElementById('spin-btn').addEventListener('click', doSpin);
-
   initDraw();
 });
