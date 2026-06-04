@@ -77,13 +77,21 @@ function getCurrentStage(matches) {
 }
 
 function renderStats(matches, teamStatus, playerMap) {
-  const allTeams = [...TEAMS.tier1, ...TEAMS.tier2, ...TEAMS.tier3];
-  const alive = allTeams.filter(t => !teamStatus[t.id]?.eliminated).length;
-  const stage = getCurrentStage(matches);
-  document.getElementById('stat-alive').textContent   = alive || '—';
-  document.getElementById('stat-stage').textContent   = stage;
-  document.getElementById('stat-players').textContent = Object.keys(playerMap).length || '—';
-  document.getElementById('header-stage').textContent = stage;
+  const allTeams    = [...TEAMS.tier1, ...TEAMS.tier2, ...TEAMS.tier3];
+  const teamsAlive  = allTeams.filter(t => !teamStatus[t.id]?.eliminated).length;
+  const stage       = getCurrentStage(matches);
+  const playerCount = Object.keys(playerMap).length;
+
+  // Players alive = players with at least 1 team not eliminated
+  const playersAlive = Object.values(playerMap).filter(p =>
+    Object.values(p.teams).some(tid => !teamStatus[tid]?.eliminated)
+  ).length;
+
+  document.getElementById('stat-alive').textContent         = teamsAlive || '—';
+  document.getElementById('stat-stage').textContent         = stage;
+  document.getElementById('stat-players').textContent       = playerCount || '—';
+  document.getElementById('stat-players-alive').textContent = playersAlive || '—';
+  document.getElementById('header-stage').textContent       = stage;
 }
 
 function renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes) {
