@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WC2026 Sweepstakes — The Draw</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="page-header">
+  <div class="container">
+    <div class="inner">
+      <div class="site-title">
+        <span class="trophy">🎰</span>
+        The Draw
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Leaderboard</a>
+        <a href="draw.html">Draw</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Progress -->
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="flex:1">
+        <div id="status-msg" style="display:none"></div>
+        <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+        <div class="muted" id="progress-text" style="margin-top:4px">Loading...</div>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="share-draw-btn">📲 Share draw link</button>
+    </div>
+  </div>
+
+  <div class="draw-layout">
+
+    <!-- Wheel + controls -->
+    <div class="wheel-section">
+
+      <div class="current-label" id="current-info" style="display:none">
+        <h2 id="current-player">—</h2>
+        <span class="tier-tag tier-tag--1" id="current-tier">Tier 1</span>
+      </div>
+
+      <canvas id="wheel-canvas" width="480" height="480"></canvas>
+
+      <!-- Admin auth (shown until password entered) -->
+      <div class="auth-row" id="auth-row">
+        <input type="password" id="admin-pwd-input" placeholder="Admin password" style="max-width:200px">
+        <button class="btn btn--green" id="admin-auth-btn">Unlock</button>
+      </div>
+
+      <!-- Spin button (shown after auth) -->
+      <button class="btn btn--spin" id="spin-btn" style="display:none" disabled>SPIN!</button>
+
+    </div>
+
+    <!-- Draw log -->
+    <div class="card draw-log-panel">
+      <div class="section-title">Draw Log</div>
+      <div id="draw-log"><p class="muted">Loading...</p></div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- Result overlay -->
+<div class="result-banner" id="result-banner"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/teams.js"></script>
+<script src="js/db.js"></script>
+<script src="js/wheel.js"></script>
+<script src="js/draw.js"></script>
+
+</body>
+</html>
