@@ -4,21 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WC2026 Sweepstakes — The Draw</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header class="page-header">
+<header class="site-header">
   <div class="container">
-    <div class="inner">
-      <div class="site-title">
-        <span class="trophy">🎰</span>
-        The Draw
+    <div class="header-inner">
+      <div>
+        <div class="site-title">THE DRAW</div>
+        <div class="site-meta">// SPIN TO WIN //</div>
       </div>
       <nav class="nav-links">
-        <a href="index.html">Leaderboard</a>
-        <a href="draw.html">Draw</a>
-        <a href="admin.html">Admin</a>
+        <a href="index.html">LEADERBOARD</a>
+        <a href="draw.html">DRAW</a>
+        <a href="admin.html">ADMIN</a>
       </nav>
     </div>
   </div>
@@ -26,15 +28,15 @@
 
 <main class="container">
 
-  <!-- Progress -->
-  <div class="card" style="margin-bottom:20px">
+  <!-- Progress bar -->
+  <div class="panel" style="padding:14px 20px;margin-bottom:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div style="flex:1">
-        <div id="status-msg" style="display:none"></div>
+      <div style="flex:1;min-width:200px">
+        <div id="status-msg" class="status-msg" style="display:none;margin-bottom:8px"></div>
         <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
-        <div class="muted" id="progress-text" style="margin-top:4px">Loading...</div>
+        <div class="muted" id="progress-text" style="margin-top:4px;font-size:.7rem">LOADING...</div>
       </div>
-      <button class="btn btn--ghost btn--sm" id="share-draw-btn">📲 Share draw link</button>
+      <button class="btn btn--ghost" id="share-draw-btn" style="font-size:.45rem;white-space:nowrap">📲 SHARE DRAW LINK</button>
     </div>
   </div>
 
@@ -45,25 +47,31 @@
 
       <div class="current-label" id="current-info" style="display:none">
         <h2 id="current-player">—</h2>
-        <span class="tier-tag tier-tag--1" id="current-tier">Tier 1</span>
+        <span class="tier-tag tier-tag--1" id="current-tier">TIER 1</span>
       </div>
 
       <canvas id="wheel-canvas" width="480" height="480"></canvas>
 
-      <!-- Admin auth (shown until password entered) -->
-      <div class="auth-row" id="auth-row">
-        <input type="password" id="admin-pwd-input" placeholder="Admin password" style="max-width:200px">
-        <button class="btn btn--green" id="admin-auth-btn">Unlock</button>
+      <!-- Waiting state -->
+      <div id="waiting-msg">
+        <div class="insert-coin">INSERT COIN</div>
+        <div class="muted" style="font-size:.65rem;margin-top:12px;text-align:center">Enter admin password to start</div>
       </div>
 
-      <!-- Spin button (shown after auth) -->
+      <!-- Auth -->
+      <div class="auth-row" id="auth-row">
+        <input type="password" id="admin-pwd-input" placeholder="Admin password" style="max-width:200px">
+        <button class="btn" id="admin-auth-btn">UNLOCK</button>
+      </div>
+
+      <!-- Spin button -->
       <button class="btn btn--spin" id="spin-btn" style="display:none" disabled>SPIN!</button>
 
     </div>
 
     <!-- Draw log -->
-    <div class="card draw-log-panel">
-      <div class="section-title">Draw Log</div>
+    <div class="panel draw-log-panel">
+      <div class="panel-title">DRAW LOG</div>
       <div id="draw-log"><p class="muted">Loading...</p></div>
     </div>
 
@@ -71,7 +79,6 @@
 
 </main>
 
-<!-- Result overlay -->
 <div class="result-banner" id="result-banner"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -80,6 +87,5 @@
 <script src="js/db.js"></script>
 <script src="js/wheel.js"></script>
 <script src="js/draw.js"></script>
-
 </body>
 </html>
