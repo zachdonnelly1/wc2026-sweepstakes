@@ -8,6 +8,71 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Predictions ── */
+    .pred-section-title {
+      font-family: var(--font-pixel); font-size: 7px; color: var(--text-muted);
+      letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .pred-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .pred-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .pred-header {
+      font-family: var(--font-pixel); font-size: 7px;
+      color: var(--text-primary);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 12px 14px 4px;
+      letter-spacing: 1px;
+    }
+    .pred-prize { color: var(--yellow); }
+    .pred-locked-tag {
+      font-size: 6px; color: var(--teal);
+      border: 1px solid rgba(64,236,168,.4); padding: 1px 5px;
+    }
+    .pred-subtitle {
+      font-size: 10px; color: var(--text-dim);
+      padding: 2px 14px 10px; border-bottom: 1px solid var(--border);
+    }
+    .pred-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pred-row:last-child { border-bottom: none; }
+    .pred-row--leader { background: rgba(245,232,64,.04); border-left: 3px solid var(--yellow); }
+    .pred-row--locked { background: rgba(64,236,168,.04); border-left: 3px solid var(--teal); }
+    .pred-rank { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); }
+    .pred-row--leader .pred-rank { color: var(--yellow); }
+    .pred-row--locked .pred-rank { color: var(--teal); }
+    .pred-info { min-width: 0; }
+    .pred-main {
+      font-family: var(--font-pixel); font-size: 7px;
+      color: var(--text-primary); display: flex; align-items: center; gap: 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pred-sub { font-size: 10px; color: var(--text-muted); display: block; margin-top: 2px; }
+    .pred-stat { text-align: right; }
+    .pred-val { font-family: var(--font-pixel); font-size: 9px; color: var(--yellow); }
+    .pred-row:not(.pred-row--leader):not(.pred-row--locked) .pred-val { color: var(--text-muted); }
+    .pred-leader-dot {
+      display: inline-block; width: 5px; height: 5px;
+      background: var(--yellow); border-radius: 50%;
+      animation: blink 1s step-end infinite;
+    }
+    .pred-empty { padding: 14px; font-size: 11px; color: var(--text-dim); text-align: center; }
+  </style>
 </head>
 <body>
 
@@ -64,6 +129,12 @@
 
   <!-- Leaderboard -->
   <div id="players-grid"></div>
+
+  <!-- Predictions -->
+  <div style="margin-bottom:20px">
+    <p class="pred-section-title">// PRIZE PREDICTIONS — LIVE PROJECTIONS</p>
+    <div id="predictions-container"></div>
+  </div>
 
   <!-- Prize pool -->
   <div class="card" style="padding:0">
