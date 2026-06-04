@@ -29,16 +29,52 @@ async function loadAdminData() {
   }
 }
 
+function generateToken(playerId) {
+  const hash = btoa(`${playerId}:${CONFIG.ADMIN_PASSWORD}`).replace(/=/g, '');
+  return `${playerId}-${hash}`;
+}
+
 function renderPlayerInputs() {
   const container = document.getElementById('player-inputs');
-  // Pre-fill existing names, pad to 16
   const names = [...players.map(p => p.name), ...Array(16).fill('')].slice(0, 16);
 
   container.innerHTML = names.map((name, i) => `
-    <div class="player-input-row">
-      <label>${i + 1}.</label>
-      <input type="text" id="player-${i}" value="${escHtml(name)}" placeholder="Player ${i + 1} name" maxlength="30">
+    <div class="player-field">
+      <span class="player-num">${String(i + 1).padStart(2, '0')}</span>
+      <input type="text" id="player-${i}" value="${escHtml(name)}" placeholder="Player ${i + 1}" maxlength="30">
     </div>`).join('');
+
+  // Show player draw links if players exist
+  renderPlayerLinks();
+}
+
+function renderPlayerLinks() {
+  const existing = document.getElementById('player-links');
+  if (existing) existing.remove();
+  if (!players.length) return;
+
+  const base = window.location.href.replace('admin.html', 'draw.html');
+  const linksHtml = players.map(p => {
+    const token = generateToken(p.id);
+    const url   = `${base}?token=${token}`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:var(--font-pixel);font-size:7px;color:var(--text-primary);min-width:120px">${escHtml(p.name)}</span>
+      <input type="text" value="${url}" readonly style="font-size:10px;flex:1" onclick="this.select()">
+      <button class="btn-ghost" onclick="copyLink('${escHtml(url)}')" style="font-size:7px;white-space:nowrap">COPY</button>
+    </div>`;
+  }).join('');
+
+  const section = document.createElement('div');
+  section.id = 'player-links';
+  section.style.marginTop = '20px';
+  section.innerHTML = `<p style="font-family:var(--font-pixel);font-size:7px;color:var(--text-muted);margin-bottom:12px;letter-spacing:1px">// PLAYER DRAW LINKS — share each person their own link</p>${linksHtml}`;
+  document.getElementById('player-inputs').parentNode.appendChild(section);
+}
+
+function copyLink(url) {
+  navigator.clipboard.writeText(url).then(() => showMsg('Link copied!', 'success')).catch(() => {
+    showMsg('Copy failed — select and copy manually.', 'error');
+  });
 }
 
 async function savePlayers() {
