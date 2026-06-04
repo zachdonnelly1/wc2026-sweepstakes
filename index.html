@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WC2026 Sweepstakes — Leaderboard</title>
-  <meta name="description" content="World Cup 2026 sweepstakes live leaderboard">
+  <title>WC2026 Sweepstakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header class="page-header">
+<header class="site-header">
   <div class="container">
-    <div class="inner">
-      <div class="site-title">
-        <span class="trophy">🏆</span>
-        WC2026 Sweepstakes
+    <div class="header-inner">
+      <div>
+        <div class="site-title">WORLD CUP<br>SWEEPSTAKES</div>
+        <div class="site-meta">// 16 PLAYERS // €240 POT</div>
       </div>
       <nav class="nav-links">
-        <a href="index.html">Leaderboard</a>
-        <a href="draw.html">Draw</a>
-        <a href="admin.html">Admin</a>
+        <a href="index.html">LEADERBOARD</a>
+        <a href="draw.html">DRAW</a>
+        <a href="admin.html">ADMIN</a>
       </nav>
     </div>
   </div>
@@ -29,9 +30,9 @@
 
   <div id="error-banner"></div>
 
-  <!-- Prize pool summary -->
-  <div class="card prize-panel" style="margin-bottom:24px">
-    <div class="section-title">💰 The Avalanche — Prize Pool</div>
+  <!-- Prize pool -->
+  <div class="panel">
+    <div class="panel-title">💰 THE AVALANCHE — PRIZE POOL</div>
     <div id="prize-panel">Loading...</div>
   </div>
 
@@ -39,22 +40,19 @@
   <div class="meta-bar">
     <div class="meta-info">
       <span id="match-count">—</span> &nbsp;·&nbsp;
-      <span id="last-updated">—</span>
+      <span id="last-updated" class="live-dot">—</span>
     </div>
-    <div class="actions">
-      <button class="btn btn--ghost btn--sm" id="refresh-btn">↻ Refresh</button>
-      <button class="btn btn--whatsapp" id="whatsapp-btn">Share on WhatsApp</button>
+    <div class="meta-actions">
+      <button class="btn btn--ghost" id="refresh-btn" style="font-size:.5rem;padding:8px 14px">↻ REFRESH</button>
+      <button class="btn btn--whatsapp" id="whatsapp-btn">📲 SHARE</button>
     </div>
   </div>
 
-  <!-- Player cards -->
-  <div class="players-grid" id="players-grid">
-    <p class="muted center" style="padding:40px 0">Loading standings...</p>
-  </div>
+  <!-- Leaderboard -->
+  <div id="players-grid"></div>
 
 </main>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/teams.js"></script>
@@ -62,6 +60,5 @@
 <script src="js/api.js"></script>
 <script src="js/prizes.js"></script>
 <script src="js/leaderboard.js"></script>
-
 </body>
 </html>
