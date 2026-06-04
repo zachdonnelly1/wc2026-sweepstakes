@@ -88,19 +88,17 @@ async function renderSpecialPrizes() {
         ${players.map(p => `<option value="${p.id}" ${awarded?.player_id === p.id ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')}
       </select>`;
 
-      return `<div class="special-prize-row">
-        <div class="sp-meta">
-          <span class="sp-icon">${icon}</span>
-          <div>
-            <strong>${label}</strong>
-            <div class="sp-desc">${desc}</div>
-            ${awarded ? `<div class="sp-winner">Currently: ${escHtml(awarded.players?.name || '')}</div>` : ''}
-          </div>
+      return `<div class="special-prize">
+        <span class="sp-icon">${icon}</span>
+        <div class="sp-info">
+          <div class="sp-name">${label}</div>
+          <div class="sp-desc">${desc}</div>
+          ${awarded ? `<div class="sp-awarded">Awarded to: ${escHtml(awarded.players?.name || '')}</div>` : ''}
         </div>
-        <div class="sp-actions">
+        <div class="sp-controls">
           ${selectHtml}
-          <button class="btn btn--sm" onclick="awardSpecialPrize('${type}')">Award</button>
-          ${awarded ? `<button class="btn btn--sm btn--danger" onclick="revokeSpecialPrize('${type}')">Revoke</button>` : ''}
+          <button class="btn" style="font-size:7px;padding:9px 14px" onclick="awardSpecialPrize('${type}')">AWARD</button>
+          ${awarded ? `<button class="btn btn-danger" style="font-size:7px;padding:9px 14px" onclick="revokeSpecialPrize('${type}')">REVOKE</button>` : ''}
         </div>
       </div>`;
     }).join('');
