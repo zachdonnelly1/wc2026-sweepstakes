@@ -11,19 +11,15 @@
 </head>
 <body>
 
-<header class="site-header">
+<header class="site-header scanline">
   <div class="container">
-    <div class="header-inner">
-      <div>
-        <div class="site-title">WORLD CUP<br>SWEEPSTAKES</div>
-        <div class="site-meta">// 16 PLAYERS // €240 POT</div>
-      </div>
-      <nav class="nav-links">
-        <a href="index.html">LEADERBOARD</a>
-        <a href="draw.html">DRAW</a>
-        <a href="admin.html">ADMIN</a>
-      </nav>
-    </div>
+    <h1 class="site-title">WORLD CUP<br>SWEEPSTAKES '26</h1>
+    <p class="site-meta"><span class="live-dot"></span><span id="header-stage">LOADING</span> · 16 PLAYERS · €240 POT</p>
+    <nav class="nav-links">
+      <a href="index.html" class="active">LEADERBOARD</a>
+      <a href="draw.html">DRAW</a>
+      <a href="admin.html">ADMIN</a>
+    </nav>
   </div>
 </header>
 
@@ -31,26 +27,45 @@
 
   <div id="error-banner"></div>
 
-  <!-- Prize pool -->
-  <div class="panel">
-    <div class="panel-title">💰 THE AVALANCHE — PRIZE POOL</div>
-    <div id="prize-panel">Loading...</div>
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <p class="stat-label">TOTAL POT</p>
+      <p class="stat-value">€240</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">PLAYERS</p>
+      <p class="stat-value blue" id="stat-players">—</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">TEAMS ALIVE</p>
+      <p class="stat-value teal" id="stat-alive">—</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">CURRENT STAGE</p>
+      <p class="stat-value blue" id="stat-stage">—</p>
+    </div>
   </div>
 
   <!-- Meta bar -->
   <div class="meta-bar">
-    <div class="meta-info">
-      <span id="match-count">—</span> &nbsp;·&nbsp;
-      <span id="last-updated" class="live-dot">—</span>
-    </div>
+    <span class="meta-info" id="last-updated">LAST UPDATED: —</span>
     <div class="meta-actions">
-      <button class="btn btn--ghost" id="refresh-btn" style="font-size:.5rem;padding:8px 14px">↻ REFRESH</button>
-      <button class="btn btn--whatsapp" id="whatsapp-btn">📲 SHARE</button>
+      <button class="btn-ghost" id="refresh-btn">↻ REFRESH</button>
+      <button class="btn btn-whatsapp" style="font-size:8px;padding:10px 16px" id="whatsapp-btn">📲 SHARE</button>
     </div>
   </div>
 
   <!-- Leaderboard -->
   <div id="players-grid"></div>
+
+  <!-- Prize pool -->
+  <div class="card" style="padding:0">
+    <div style="padding:16px 14px 0">
+      <p class="panel-title">// THE AVALANCHE — PRIZE POOL</p>
+    </div>
+    <div id="prize-panel"></div>
+  </div>
 
 </main>
 
