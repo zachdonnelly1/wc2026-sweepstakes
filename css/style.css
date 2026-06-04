@@ -2,24 +2,24 @@
 
 /* ─── Variables ───────────────────────────────────────────────────── */
 :root {
-  --bg-page:       #0a0f1a;
-  --bg-card:       #0f1a2e;
-  --bg-row:        #0a1220;
-  --bg-row-alt:    #0d1628;
-  --border:        #0f1f3a;
-  --border-active: #1a3a70;
+  --bg-page:       #080c14;
+  --bg-card:       #0d1625;
+  --bg-row:        #091020;
+  --bg-row-alt:    #0b1422;
+  --border:        #0f2040;
+  --border-active: #1e4080;
 
-  --yellow: #f0e040;
-  --blue:   #60a0ff;
-  --teal:   #40e0a0;
-  --red:    #ff4040;
-  --muted:  #3a6ab0;
-  --dimmed: #1a3a70;
+  --yellow: #f5e840;
+  --blue:   #6ab0ff;
+  --teal:   #40eca8;
+  --red:    #ff4444;
+  --muted:  #4a7ac0;
+  --dimmed: #1e4080;
 
-  --text-primary:   #e0f0ff;
-  --text-secondary: #60a0ff;
-  --text-muted:     #3a6ab0;
-  --text-dim:       #1a3a70;
+  --text-primary:   #eaf4ff;
+  --text-secondary: #6ab0ff;
+  --text-muted:     #4a7ac0;
+  --text-dim:       #1e4080;
 
   --font-pixel: 'Press Start 2P', monospace;
   --font-mono:  'DM Mono', monospace;
@@ -107,7 +107,7 @@ a:hover { color: var(--yellow); }
 /* ─── Stat cards ──────────────────────────────────────────────────── */
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 8px;
   margin-bottom: 16px;
 }
