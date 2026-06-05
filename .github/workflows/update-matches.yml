@@ -1,0 +1,27 @@
+name: Update match data
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch matches from football-data.org
+        run: |
+          curl -sf \
+            -H "X-Auth-Token: ${{ secrets.FOOTBALL_API_TOKEN }}" \
+            "https://api.football-data.org/v4/competitions/2000/matches" \
+            -o data/matches.json
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/matches.json
+          git diff --staged --quiet || git commit -m "chore: update match data [skip ci]"
+          git push
