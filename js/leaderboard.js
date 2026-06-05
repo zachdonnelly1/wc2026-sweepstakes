@@ -2,6 +2,96 @@
 
 let refreshTimer;
 
+const PRIZE_META = {
+  winner:          { icon: '🏆', label: 'TOURNAMENT WINNER' },
+  runner_up:       { icon: '🥈', label: 'RUNNER-UP'         },
+  semi_finalist:   { icon: '🎖️', label: 'SEMI-FINAL'        },
+  underdog_hero:   { icon: '🦁', label: 'UNDERDOG HERO'     },
+  beautiful_loser: { icon: '💐', label: 'BEAUTIFUL LOSER'   },
+  wooden_spoon:    { icon: '🥄', label: 'WOODEN SPOON'      },
+};
+const PRIZE_ORDER = ['winner','runner_up','semi_finalist','underdog_hero','beautiful_loser','wooden_spoon'];
+
+function prizeKey(p) { return `${p.type}_${p.player.id}`; }
+
+// ─── Payout banner ────────────────────────────────────────────────────
+function checkAndShowPayoutBanner(prizes) {
+  const locked = prizes.filter(p => p.status === 'locked');
+  if (!locked.length) return;
+
+  const seenKey = 'wc2026_seen_payouts';
+  const seen = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'));
+  const newPayouts = locked.filter(p => !seen.has(prizeKey(p)));
+  if (!newPayouts.length) return;
+
+  const top = [...newPayouts].sort((a, b) => b.amount - a.amount)[0];
+  const meta = PRIZE_META[top.type] || { icon: '🏅', label: top.label };
+  const totalNew = newPayouts.reduce((s, p) => s + p.amount, 0);
+
+  const eyebrow = newPayouts.length > 1
+    ? `🎉 ${newPayouts.length} NEW PAYOUTS LOCKED IN`
+    : '🎉 PAYOUT LOCKED IN';
+  const msg = newPayouts.length > 1
+    ? `${meta.label} · ${top.player.name.toUpperCase()} +${newPayouts.length - 1} MORE`
+    : `${meta.label} — ${top.player.name.toUpperCase()} WINS €${top.amount}`;
+
+  document.getElementById('payout-banner-icon').textContent  = meta.icon;
+  document.getElementById('payout-banner-eyebrow').textContent = eyebrow;
+  document.getElementById('payout-banner-msg').textContent   = msg;
+  document.getElementById('payout-banner-amt').textContent   = `€${totalNew}`;
+
+  const banner = document.getElementById('payout-banner');
+  banner.style.display = 'block';
+  banner.style.animation = 'none';
+  void banner.offsetWidth; // reflow to restart animation
+  banner.style.animation = '';
+
+  locked.forEach(p => seen.add(prizeKey(p)));
+  localStorage.setItem(seenKey, JSON.stringify([...seen]));
+
+  const timer = setTimeout(dismissPayoutBanner, 9000);
+  document.getElementById('payout-banner-close').onclick = () => { clearTimeout(timer); dismissPayoutBanner(); };
+}
+
+function dismissPayoutBanner() {
+  const banner = document.getElementById('payout-banner');
+  banner.style.animation = 'slideUp .3s ease forwards';
+  setTimeout(() => { banner.style.display = 'none'; banner.style.animation = ''; }, 300);
+}
+
+// ─── Payouts timeline ─────────────────────────────────────────────────
+function renderPayoutsTimeline(prizes) {
+  const locked = prizes.filter(p => p.status === 'locked');
+  const section = document.getElementById('payouts-section');
+  if (!locked.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  const totalPaid = locked.reduce((s, p) => s + p.amount, 0);
+  const sorted = [...locked].sort((a, b) =>
+    (PRIZE_ORDER.indexOf(a.type) ?? 99) - (PRIZE_ORDER.indexOf(b.type) ?? 99)
+  );
+
+  document.getElementById('payouts-timeline').innerHTML = `
+    <div class="card" style="padding:0;margin-bottom:16px">
+      <div style="padding:14px 14px 0;display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+        <p class="panel-title" style="margin:0;border:none;padding:0">// PAYOUTS — PRIZES LOCKED IN</p>
+        <span style="font-family:var(--font-pixel);font-size:9px;color:var(--yellow)">€${totalPaid} PAID OUT</span>
+      </div>
+      ${sorted.map(p => {
+        const meta = PRIZE_META[p.type] || { icon: '🏅', label: p.label };
+        return `<div class="payout-row">
+          <span class="payout-icon">${meta.icon}</span>
+          <div class="payout-info">
+            <span class="payout-prize-name">${meta.label}</span>
+            <span class="payout-player">${p.player.name.toUpperCase()}</span>
+          </div>
+          <span class="payout-amt">€${p.amount}</span>
+          <span class="badge badge-yellow" style="font-size:5px">LOCKED</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
 // ─── Team stats from match data ───────────────────────────────────────
 function buildTeamStats(matches) {
   const stats = {};
@@ -126,6 +216,8 @@ async function refresh(force = false) {
 
     renderStats(matches, teamStatus, playerMap, teamStats);
     renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes, teamStats);
+    renderPayoutsTimeline(prizes);
+    checkAndShowPayoutBanner(prizes);
     renderPredictions(predictions, specialPrizes);
     renderPrizePanel(prizes);
     renderMeta(matches);
