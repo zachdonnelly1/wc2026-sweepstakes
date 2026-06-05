@@ -84,11 +84,24 @@
       <a href="index.html" class="active">LEADERBOARD</a>
       <a href="draw.html">DRAW</a>
       <a href="fixtures.html">FIXTURES</a>
-      <a href="how-it-works.html">HOW IT WORKS</a>
       <a href="admin.html">ADMIN</a>
+      <a href="how-it-works.html">HOW IT WORKS</a>
     </nav>
   </div>
 </header>
+
+<!-- Payout alert banner (shown once per device when a new prize locks in) -->
+<div id="payout-banner" class="payout-banner" style="display:none" role="alert">
+  <div class="payout-banner-inner">
+    <span class="payout-banner-icon" id="payout-banner-icon">🏆</span>
+    <div class="payout-banner-text">
+      <span class="payout-banner-eyebrow" id="payout-banner-eyebrow">🎉 PAYOUT ALERT</span>
+      <span class="payout-banner-msg" id="payout-banner-msg"></span>
+    </div>
+    <span class="payout-banner-amt" id="payout-banner-amt"></span>
+    <button class="payout-banner-close" id="payout-banner-close" aria-label="Dismiss">✕</button>
+  </div>
+</div>
 
 <main class="container">
 
@@ -129,6 +142,11 @@
 
   <!-- Leaderboard -->
   <div id="players-grid"></div>
+
+  <!-- Payouts timeline (only shown when prizes are locked) -->
+  <div id="payouts-section" style="display:none">
+    <div id="payouts-timeline"></div>
+  </div>
 
   <!-- Predictions -->
   <div style="margin-bottom:20px">
