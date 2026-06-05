@@ -403,6 +403,65 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
 .danger-zone-card { border-color: var(--red) !important; }
 .danger-title { color: var(--red) !important; }
 
+/* ─── Payout banner ──────────────────────────────────────────────── */
+.payout-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 2000;
+  background: var(--yellow);
+  color: var(--bg-page);
+  animation: slideDown .35s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 4px 40px rgba(245,232,64,.5);
+}
+@keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes slideUp   { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+.payout-banner-inner {
+  max-width: 900px; margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.payout-banner-icon { font-size: 1.8rem; flex-shrink: 0; }
+.payout-banner-text { flex: 1; min-width: 0; }
+.payout-banner-eyebrow {
+  font-family: var(--font-pixel); font-size: 6px;
+  letter-spacing: 2px; opacity: .6; display: block; margin-bottom: 4px;
+}
+.payout-banner-msg {
+  font-family: var(--font-pixel); font-size: 9px;
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.payout-banner-amt {
+  font-family: var(--font-pixel); font-size: 22px; flex-shrink: 0;
+}
+.payout-banner-close {
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: var(--bg-page); opacity: .45; flex-shrink: 0; padding: 4px 6px; line-height: 1;
+}
+.payout-banner-close:hover { opacity: 1; }
+
+/* ─── Payouts timeline ────────────────────────────────────────────── */
+.payout-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center; gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.payout-row:last-child { border-bottom: none; }
+.payout-icon { font-size: 1.1rem; text-align: center; }
+.payout-info { min-width: 0; }
+.payout-prize-name {
+  font-family: var(--font-pixel); font-size: 7px;
+  color: var(--text-primary); display: block; margin-bottom: 3px;
+}
+.payout-player {
+  font-family: var(--font-pixel); font-size: 6px; color: var(--yellow); display: block;
+}
+.payout-amt {
+  font-family: var(--font-pixel); font-size: 11px;
+  color: var(--yellow); text-align: right; white-space: nowrap;
+}
+
 /* ─── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .container { padding: 0 14px; }
@@ -481,4 +540,13 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
   /* Reveal card teams: stack to 2 cols */
   .reveal-teams { gap: 8px; }
   .reveal-team { padding: 10px 12px; font-size: 13px; }
+
+  /* Payout banner */
+  .payout-banner-inner { padding: 12px 14px; gap: 10px; }
+  .payout-banner-amt { font-size: 16px; }
+  .payout-banner-msg { font-size: 8px; }
+
+  /* Payouts timeline */
+  .payout-row { grid-template-columns: 24px 1fr auto; }
+  .payout-row .badge { display: none; }
 }
