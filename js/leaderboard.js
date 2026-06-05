@@ -20,12 +20,20 @@ function buildTeamStats(matches) {
   return stats;
 }
 
+const ROUND_ORDER = ['GROUP_STAGE','LAST_32','LAST_16','QUARTER_FINALS','SEMI_FINALS','FINAL'];
+
 function playerSummary(player, teamStats, teamStatus) {
   const tids = Object.values(player.teams).filter(Boolean);
+  const roundVal = id => {
+    const s = teamStatus[id];
+    if (!s) return 0;
+    return Math.max(0, ROUND_ORDER.indexOf(s.stage));
+  };
   return {
-    wins:    tids.reduce((s, id) => s + (teamStats[id]?.wins     || 0), 0),
-    gd:      tids.reduce((s, id) => s + (teamStats[id]?.gd       || 0), 0),
-    alive:   tids.filter(id => !teamStatus[id]?.eliminated).length,
+    wins:      tids.reduce((s, id) => s + (teamStats[id]?.wins || 0), 0),
+    gd:        tids.reduce((s, id) => s + (teamStats[id]?.gd   || 0), 0),
+    alive:     tids.filter(id => !teamStatus[id]?.eliminated).length,
+    bestRound: tids.length ? Math.max(0, ...tids.map(roundVal)) : 0,
   };
 }
 
@@ -46,15 +54,32 @@ function computePredictions(matches, playerMap, teamStatus) {
     groupGoals[a].scored += ag; groupGoals[a].conceded += hg; groupGoals[a].played++;
   });
 
-  // Underdog Hero: top 3 Tier 3 teams by total wins (any stage)
+  // Underdog Hero: alive T3 teams first (sorted by wins+GD), then eliminated as context
   const underdogTop3 = TEAMS.tier3
-    .map(t => ({ team:t, wins: ts[t.id]?.wins||0, gd: ts[t.id]?.gd||0, eliminated: !!teamStatus[t.id]?.eliminated, player: findPlayerByTeam(t.id, playerMap) }))
-    .sort((a,b) => b.wins - a.wins || b.gd - a.gd)
+    .map(t => ({
+      team: t,
+      wins: ts[t.id]?.wins || 0,
+      gd:   ts[t.id]?.gd   || 0,
+      alive: !teamStatus[t.id]?.eliminated,
+      player: findPlayerByTeam(t.id, playerMap),
+    }))
+    .sort((a, b) => {
+      if (a.alive !== b.alive) return b.alive - a.alive; // alive first
+      if (b.wins  !== a.wins)  return b.wins  - a.wins;
+      return b.gd - a.gd;
+    })
     .slice(0, 3);
 
-  // Beautiful Loser: top 3 teams by group stage goals scored (anyone — eliminated or not)
+  // Beautiful Loser:
+  // - During group stage: all teams by goals scored (any could exit)
+  // - Once R32 starts: only teams actually eliminated in group stage
+  const last32Started = matches.some(m => m.stage === 'LAST_32');
   const allTeams = [...TEAMS.tier1, ...TEAMS.tier2, ...TEAMS.tier3];
-  const beautifulTop3 = allTeams
+  const blPool = last32Started
+    ? allTeams.filter(t => teamStatus[t.id]?.eliminated && teamStatus[t.id]?.stage === 'GROUP_STAGE')
+    : allTeams;
+
+  const beautifulTop3 = blPool
     .map(t => {
       const g = groupGoals[t.id] || { scored:0, played:0 };
       return { team:t, goals: g.scored, played: g.played, gpg: g.played>0?(g.scored/g.played).toFixed(1):'—', player: findPlayerByTeam(t.id, playerMap) };
@@ -157,9 +182,10 @@ function renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes, teamStats
   const sorted = Object.values(playerMap).sort((a, b) => {
     const sa = playerSummary(a, teamStats, teamStatus);
     const sb = playerSummary(b, teamStats, teamStatus);
-    if (sb.wins  !== sa.wins)  return sb.wins  - sa.wins;
-    if (sb.gd    !== sa.gd)    return sb.gd    - sa.gd;
-    if (sb.alive !== sa.alive) return sb.alive - sa.alive;
+    if (sb.alive     !== sa.alive)     return sb.alive     - sa.alive;
+    if (sb.bestRound !== sa.bestRound) return sb.bestRound - sa.bestRound;
+    if (sb.wins      !== sa.wins)      return sb.wins      - sa.wins;
+    if (sb.gd        !== sa.gd)        return sb.gd        - sa.gd;
     return a.name.localeCompare(b.name);
   });
 
