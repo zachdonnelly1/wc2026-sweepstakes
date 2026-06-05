@@ -231,9 +231,9 @@ label {
 /* ─── Leaderboard ─────────────────────────────────────────────────── */
 .lb-row {
   display: grid;
-  grid-template-columns: 28px 1fr 90px 70px 70px;
+  grid-template-columns: 28px 1fr 90px 64px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 10px 14px;
   background: var(--bg-row);
   border: 1px solid var(--border);
@@ -262,7 +262,7 @@ label {
 
 .lb-teams { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
 .lb-teams .alive      { color: var(--teal); }
-.lb-teams .eliminated { color: var(--text-dim); text-decoration: line-through; }
+.lb-teams .eliminated { color: var(--text-dim); opacity: .55; text-decoration: none; }
 
 .lb-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .lb-bar      { height: 100%; background: var(--teal); border-radius: 2px; transition: width .5s; }
@@ -405,8 +405,80 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
 
 /* ─── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .lb-row { grid-template-columns: 24px 1fr 70px 60px; }
+  .container { padding: 0 14px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .lb-row { grid-template-columns: 24px 1fr 80px 54px; gap: 8px; }
   .lb-bar-wrap { display: none; }
   .prize-desc { display: none; }
   .prize-winner { display: none; }
+  .meta-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .meta-actions { justify-content: flex-end; }
+  .draw-layout { grid-template-columns: 1fr; }
+}
+
+/* ─── iPhone / narrow viewport ────────────────────────────────────── */
+@media (max-width: 430px) {
+  .container { padding: 0 12px; }
+  .site-header { padding: 20px 0 14px; margin-bottom: 16px; }
+  .site-title { font-size: 13px; }
+
+  /* Horizontally scrollable nav — no wrapping */
+  .nav-links {
+    justify-content: flex-start;
+    gap: 18px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    padding-left: 2px;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { flex-shrink: 0; white-space: nowrap; }
+
+  /* Stat grid: strict 2-col */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .stat-value { font-size: 14px; }
+  .stat-value.blue { font-size: 9px; }
+
+  /* Leaderboard: 2-row layout so teams wrap under name */
+  .lb-row {
+    grid-template-columns: 20px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 3px 8px;
+    padding: 10px 10px;
+    align-items: start;
+  }
+  .lb-name { font-size: 8px; }
+  .lb-teams {
+    grid-column: 2 / -1;
+    margin-top: 3px;
+    font-size: 10px;
+  }
+
+  /* Prize panel */
+  .prize-row { flex-wrap: wrap; gap: 6px; padding: 9px 12px; }
+  .prize-amt { min-width: auto; }
+
+  /* Prediction cards: single column */
+  .pred-grid { grid-template-columns: 1fr !important; }
+
+  /* Buttons: big enough for thumbs */
+  .btn { min-height: 44px; }
+  .btn-ghost { min-height: 40px; }
+
+  /* Slot machine: 3 per row, narrower */
+  .slot-machine { gap: 6px; }
+  .slot-column { width: calc(33vw - 16px); }
+  .slot-viewport { width: 100%; }
+  .slot-item { font-size: 10px; padding: 0 6px; gap: 4px; }
+  .slot-item .flag { font-size: 1.1rem; }
+  .slot-result { font-size: 6px; }
+
+  /* How-it-works prize grid */
+  .prize-card { grid-template-columns: 1.6rem 1fr auto; gap: 10px; padding: 12px 12px; }
+  .prize-card-amt { font-size: 10px; }
+
+  /* Reveal card teams: stack to 2 cols */
+  .reveal-teams { gap: 8px; }
+  .reveal-team { padding: 10px 12px; font-size: 13px; }
 }
