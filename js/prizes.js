@@ -28,7 +28,7 @@ function computeTeamStatus(matches) {
 
   const knockoutStages = ['LAST_32','LAST_16','QUARTER_FINALS','SEMI_FINALS','FINAL','THIRD_PLACE'];
   finished
-    .filter(m => knockoutStages.includes(m.stage) && m.score.winner)
+    .filter(m => knockoutStages.includes(m.stage) && m.score?.winner)
     .forEach(match => {
       const loserId   = match.score.winner === 'HOME_TEAM' ? match.awayTeam.id : match.homeTeam.id;
       const winnerId  = match.score.winner === 'HOME_TEAM' ? match.homeTeam.id : match.awayTeam.id;
