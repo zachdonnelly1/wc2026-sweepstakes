@@ -145,21 +145,25 @@ function computePredictions(matches, playerMap, teamStatus) {
     groupGoals[a].scored += ag; groupGoals[a].conceded += hg; groupGoals[a].played++;
   });
 
-  // Underdog Hero: alive T3 teams first (sorted by wins+GD), then eliminated as context
-  const underdogTop3 = TEAMS.tier3
-    .map(t => ({
-      team: t,
-      wins: ts[t.id]?.wins || 0,
-      gd:   ts[t.id]?.gd   || 0,
-      alive: !teamStatus[t.id]?.eliminated,
-      player: findPlayerByTeam(t.id, playerMap),
-    }))
-    .sort((a, b) => {
-      if (a.alive !== b.alive) return b.alive - a.alive; // alive first
-      if (b.wins  !== a.wins)  return b.wins  - a.wins;
-      return b.gd - a.gd;
-    })
-    .slice(0, 3);
+  // Underdog Hero: alive T3 teams ranked by stage → wins → GD
+  // Fallback when all T3 eliminated: show the last one out (actual winner) until prize locks
+  const t3mapped = TEAMS.tier3.map(t => ({
+    team: t,
+    wins:  ts[t.id]?.wins || 0,
+    gd:    ts[t.id]?.gd   || 0,
+    stage: Math.max(0, ROUND_ORDER.indexOf(teamStatus[t.id]?.stage)),
+    eliminated: !!teamStatus[t.id]?.eliminated,
+    player: findPlayerByTeam(t.id, playerMap),
+  }));
+  const t3sortFn = (a, b) => {
+    if (b.stage !== a.stage) return b.stage - a.stage;
+    if (b.wins  !== a.wins)  return b.wins  - a.wins;
+    return b.gd - a.gd;
+  };
+  const t3aliveList = t3mapped.filter(t => !t.eliminated);
+  const underdogTop3 = t3aliveList.length > 0
+    ? [...t3aliveList].sort(t3sortFn).slice(0, 3)
+    : [...t3mapped].sort(t3sortFn).slice(0, 1);
 
   // Beautiful Loser:
   // - During group stage: all teams by goals scored (any could exit)
@@ -359,12 +363,13 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
   // Underdog Hero
   const uhLocked = !!spMap['underdog_hero'];
   const uhTitle  = uhLocked ? '🦁 UNDERDOG HERO <span class="pred-locked-tag">LOCKED</span>' : '🦁 UNDERDOG HERO';
+  const t3anyAlive = underdogTop3.some(e => !e.eliminated);
   const uhRows   = underdogTop3.length
     ? underdogTop3.map((e,i) => {
-        const gdStr = e.gd > 0 ? `+${e.gd}` : `${e.gd}`;
+        const gdStr  = e.gd > 0 ? `+${e.gd}` : `${e.gd}`;
         const player = e.player?.name?.toUpperCase() || '—';
-        const elim   = e.eliminated ? ' <span style="color:var(--red);font-size:.7em">OUT</span>' : '';
-        return rankRow(i, `${e.team.flag} ${e.team.name.toUpperCase()}${elim}`, `${e.wins}W`, player, `GD ${gdStr}`, uhLocked);
+        const tag    = !t3anyAlive ? ' <span style="color:var(--yellow);font-size:.7em">LAST OUT</span>' : '';
+        return rankRow(i, `${e.team.flag} ${e.team.name.toUpperCase()}${tag}`, `${e.wins}W`, player, `GD ${gdStr}`, uhLocked);
       }).join('')
     : '<p class="pred-empty">Waiting for kick-off...</p>';
 
@@ -391,7 +396,7 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
     <div class="pred-grid">
       <div class="pred-card">
         <div class="pred-header">${uhTitle}<span class="pred-prize">€20</span></div>
-        <div class="pred-subtitle">Last Tier 3 team standing — ranked by wins</div>
+        <div class="pred-subtitle">Last Tier 3 team standing — ranked by round reached, then wins</div>
         ${uhRows}
       </div>
       <div class="pred-card">
