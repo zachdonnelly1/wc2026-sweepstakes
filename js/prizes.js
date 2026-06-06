@@ -172,7 +172,7 @@ function computePrizes(matches, assignments, specialPrizes = []) {
 
   // Beautiful loser €15
   const spBL = spOf('beautiful_loser');
-  const last32Started = matches.some(m => m.stage === 'LAST_32');
+  const last32Started = matches.some(m => m.stage === 'LAST_32' && ['FINISHED','IN_PLAY','PAUSED'].includes(m.status));
   if (spBL) {
     const p = playerMap[spBL.player_id];
     if (p) results.push({ type:'beautiful_loser', label:'BEAUTIFUL', amount:15, player:p, status:'locked' });
