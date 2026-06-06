@@ -1,6 +1,7 @@
 // Leaderboard — ranked by wins + goal difference, with prize predictions
 
 let refreshTimer;
+let lastMatches = [];
 
 const PRIZE_META = {
   winner:          { icon: '🏆', label: 'TOURNAMENT WINNER' },
@@ -209,6 +210,7 @@ async function refresh(force = false) {
       DB.getAssignments(),
       DB.getSpecialPrizes(),
     ]);
+    lastMatches = matches;
     const { prizes, teamStatus, playerMap } = computePrizes(matches, assignments, specialPrizes);
     const prizeTotals = playerPrizeTotals(prizes);
     const teamStats   = buildTeamStats(matches);
@@ -231,7 +233,9 @@ async function refresh(force = false) {
 
 function scheduleNextRefresh() {
   clearTimeout(refreshTimer);
-  refreshTimer = setTimeout(async () => { await refresh(); scheduleNextRefresh(); }, 5 * 60 * 1000);
+  const live = API.isLiveOrImminent(lastMatches);
+  const delay = live ? 60 * 1000 : 5 * 60 * 1000;
+  refreshTimer = setTimeout(async () => { await refresh(); scheduleNextRefresh(); }, delay);
 }
 
 function getCurrentStage(matches) {
