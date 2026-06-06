@@ -261,7 +261,7 @@ label {
 .lb-badges { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
 
 .lb-teams { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-.lb-teams .alive      { color: var(--text-primary); }
+.lb-teams .alive      { color: #fff; }
 .lb-teams .eliminated { color: var(--text-dim); opacity: .55; text-decoration: none; }
 
 .lb-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
