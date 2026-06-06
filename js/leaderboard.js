@@ -189,6 +189,8 @@ function computePredictions(matches, playerMap, teamStatus) {
     .slice(0, 3);
 
   // Wooden Spoon: top 3 players by combined group stage goals conceded
+  // Only meaningful once games have been played — filter out 0s
+  // After R32 starts the group stage is final
   const woodenTop3 = Object.values(playerMap)
     .map(player => {
       const conceded = Object.values(player.teams).reduce((sum, tid) => sum + (groupGoals[tid]?.conceded||0), 0);
@@ -196,8 +198,9 @@ function computePredictions(matches, playerMap, teamStatus) {
         const tid = player.teams[tier];
         return tid ? `${getTeam(tid)?.tla||'?'} ${groupGoals[tid]?.conceded||0}` : '?';
       }).join(' · ');
-      return { player, conceded, detail };
+      return { player, conceded, detail, predicted: !last32Started };
     })
+    .filter(p => p.conceded > 0)
     .sort((a,b) => b.conceded - a.conceded)
     .slice(0, 3);
 
@@ -391,9 +394,10 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
     : '<p class="pred-empty">Waiting for kick-off...</p>';
 
   // Wooden Spoon
-  const wsLocked = !!spMap['wooden_spoon'];
-  const wsTitle  = wsLocked ? '🥄 WOODEN SPOON <span class="pred-locked-tag">LOCKED</span>' : '🥄 WOODEN SPOON';
-  const wsRows   = woodenTop3.length
+  const wsLocked   = !!spMap['wooden_spoon'];
+  const wsTitle    = wsLocked ? '🥄 WOODEN SPOON <span class="pred-locked-tag">LOCKED</span>' : '🥄 WOODEN SPOON';
+  const wsPredicted = woodenTop3[0]?.predicted;
+  const wsRows     = woodenTop3.length
     ? woodenTop3.map((e,i) => {
         return rankRow(i, e.player.name.toUpperCase(), `${e.conceded} GA`, e.detail, 'goals against', wsLocked);
       }).join('')
@@ -413,7 +417,7 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
       </div>
       <div class="pred-card">
         <div class="pred-header">${wsTitle}<span class="pred-prize">€5</span></div>
-        <div class="pred-subtitle">Combined goals conceded across all 3 teams, group stage</div>
+        <div class="pred-subtitle">${wsPredicted ? 'Running total — group stage in progress' : 'Combined goals conceded across all 3 teams, group stage'}</div>
         ${wsRows}
       </div>
     </div>`;
