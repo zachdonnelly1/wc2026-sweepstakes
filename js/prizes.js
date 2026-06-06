@@ -42,7 +42,7 @@ function computeTeamStatus(matches) {
     teamsInLast32.add(m.homeTeam.id);
     teamsInLast32.add(m.awayTeam.id);
   });
-  const last32Exists = matches.some(m => m.stage === 'LAST_32');
+  const last32Exists = matches.some(m => m.stage === 'LAST_32' && ['FINISHED','IN_PLAY','PAUSED'].includes(m.status));
   if (last32Exists) {
     const groupTeams = new Set();
     matches.filter(m => m.stage === 'GROUP_STAGE').forEach(m => {
