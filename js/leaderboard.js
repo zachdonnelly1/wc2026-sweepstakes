@@ -166,21 +166,26 @@ function computePredictions(matches, playerMap, teamStatus) {
     : [...t3mapped].sort(t3sortFn).slice(0, 1);
 
   // Beautiful Loser:
-  // - During group stage: all teams by goals scored (any could exit)
-  // - Once R32 starts: only teams actually eliminated in group stage
+  // - Pre-tournament: nothing (no goals yet)
+  // - During group stage: predictive — alive teams with most goals but fewest wins
+  // - Once R32 starts: locked to only actually eliminated group-stage teams
   const last32Started = matches.some(m => m.stage === 'LAST_32' && ['FINISHED','IN_PLAY','PAUSED'].includes(m.status));
   const allTeams = [...TEAMS.tier1, ...TEAMS.tier2, ...TEAMS.tier3];
-  const blPool = last32Started
-    ? allTeams.filter(t => teamStatus[t.id]?.eliminated && teamStatus[t.id]?.stage === 'GROUP_STAGE')
-    : allTeams;
+  const eliminatedInGroups = allTeams.filter(t => teamStatus[t.id]?.eliminated && teamStatus[t.id]?.stage === 'GROUP_STAGE');
+  const blPredictive = !last32Started && eliminatedInGroups.length === 0;
+  const blPool = (last32Started || eliminatedInGroups.length > 0) ? eliminatedInGroups : allTeams;
 
   const beautifulTop3 = blPool
     .map(t => {
       const g = groupGoals[t.id] || { scored:0, played:0 };
-      return { team:t, goals: g.scored, played: g.played, gpg: g.played>0?(g.scored/g.played).toFixed(1):'—', player: findPlayerByTeam(t.id, playerMap) };
+      const wins = ts[t.id]?.wins || 0;
+      return { team:t, goals: g.scored, played: g.played, wins, gpg: g.played>0?(g.scored/g.played).toFixed(1):'—', player: findPlayerByTeam(t.id, playerMap), predicted: blPredictive };
     })
     .filter(t => t.goals > 0)
-    .sort((a,b) => b.goals - a.goals || parseFloat(b.gpg) - parseFloat(a.gpg))
+    .sort((a,b) => {
+      if (blPredictive) return b.goals - a.goals || a.wins - b.wins;
+      return b.goals - a.goals || parseFloat(b.gpg) - parseFloat(a.gpg);
+    })
     .slice(0, 3);
 
   // Wooden Spoon: top 3 players by combined group stage goals conceded
@@ -376,10 +381,12 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
   // Beautiful Loser
   const blLocked = !!spMap['beautiful_loser'];
   const blTitle  = blLocked ? '💐 BEAUTIFUL LOSER <span class="pred-locked-tag">LOCKED</span>' : '💐 BEAUTIFUL LOSER';
+  const blPredicted = beautifulTop3[0]?.predicted;
   const blRows   = beautifulTop3.length
     ? beautifulTop3.map((e,i) => {
         const player = e.player?.name?.toUpperCase() || '—';
-        return rankRow(i, `${e.team.flag} ${e.team.name.toUpperCase()}`, `${e.goals}G`, player, `${e.gpg}/game`, blLocked);
+        const sub = e.predicted ? `${e.wins}W · ${e.gpg}/game` : `${e.gpg}/game`;
+        return rankRow(i, `${e.team.flag} ${e.team.name.toUpperCase()}`, `${e.goals}G`, player, sub, blLocked);
       }).join('')
     : '<p class="pred-empty">Waiting for kick-off...</p>';
 
@@ -401,7 +408,7 @@ function renderPredictions({ underdogTop3, beautifulTop3, woodenTop3 }, specialP
       </div>
       <div class="pred-card">
         <div class="pred-header">${blTitle}<span class="pred-prize">€15</span></div>
-        <div class="pred-subtitle">Most group stage goals — goes to eliminated teams</div>
+        <div class="pred-subtitle">${blPredicted ? 'Most goals, fewest wins — likely exits' : 'Most group stage goals — eliminated teams only'}</div>
         ${blRows}
       </div>
       <div class="pred-card">
