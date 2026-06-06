@@ -231,7 +231,7 @@ label {
 /* ─── Leaderboard ─────────────────────────────────────────────────── */
 .lb-row {
   display: grid;
-  grid-template-columns: 28px 1fr 90px 64px;
+  grid-template-columns: 28px 1fr 160px 64px;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
@@ -466,7 +466,7 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
 @media (max-width: 640px) {
   .container { padding: 0 14px; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .lb-row { grid-template-columns: 24px 1fr 80px 54px; gap: 8px; }
+  .lb-row { grid-template-columns: 24px 1fr 130px 54px; gap: 8px; }
   .lb-bar-wrap { display: none; }
   .prize-desc { display: none; }
   .prize-winner { display: none; }
