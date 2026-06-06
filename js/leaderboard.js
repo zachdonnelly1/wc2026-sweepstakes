@@ -163,7 +163,7 @@ function computePredictions(matches, playerMap, teamStatus) {
   // Beautiful Loser:
   // - During group stage: all teams by goals scored (any could exit)
   // - Once R32 starts: only teams actually eliminated in group stage
-  const last32Started = matches.some(m => m.stage === 'LAST_32');
+  const last32Started = matches.some(m => m.stage === 'LAST_32' && ['FINISHED','IN_PLAY','PAUSED'].includes(m.status));
   const allTeams = [...TEAMS.tier1, ...TEAMS.tier2, ...TEAMS.tier3];
   const blPool = last32Started
     ? allTeams.filter(t => teamStatus[t.id]?.eliminated && teamStatus[t.id]?.stage === 'GROUP_STAGE')
