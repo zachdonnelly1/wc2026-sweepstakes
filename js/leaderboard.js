@@ -111,7 +111,7 @@ function buildTeamStats(matches) {
   return stats;
 }
 
-const ROUND_ORDER = ['GROUP_STAGE','LAST_32','LAST_16','QUARTER_FINALS','SEMI_FINALS','FINAL'];
+const ROUND_ORDER = ['GROUP_STAGE','LAST_32','LAST_16','QUARTER_FINALS','SEMI_FINALS','THIRD_PLACE','FINAL'];
 
 function playerSummary(player, teamStats, teamStatus) {
   const tids = Object.values(player.teams).filter(Boolean);
