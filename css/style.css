@@ -498,6 +498,19 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
   padding-bottom: 2px;
 }
 
+/* ─── Leaderboard toggle ──────────────────────────────────────────── */
+.lb-row--hidden { display: none; }
+.lb-expanded .lb-row--hidden { display: grid; }
+.lb-toggle-btn {
+  display: block; width: 100%; margin-top: 10px;
+  background: none; border: 1px solid var(--border);
+  color: var(--text-muted); font-family: var(--font-pixel);
+  font-size: 7px; letter-spacing: 1px; padding: 10px;
+  cursor: pointer; border-radius: var(--radius);
+  transition: color .15s, border-color .15s;
+}
+.lb-toggle-btn:hover { color: var(--yellow); border-color: var(--yellow); }
+
 /* ─── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .container { padding: 0 14px; }
