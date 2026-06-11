@@ -260,11 +260,11 @@ async function renderDailySummary() {
       const awayTeam = getTeam(s.awayId);
       const homeFlag = homeTeam?.flag || '';
       const awayFlag = awayTeam?.flag || '';
-      const label = s.group || s.stage?.replace('_', ' ') || '';
+      const label = s.group || s.stage?.replace(/_/g, ' ') || '';
       return `<div class="summary-score-row">
-        <span class="summary-score-team summary-score-home">${homeFlag} ${s.homeTla}</span>
+        <span class="summary-score-home">${homeFlag} ${s.homeTla}</span>
         <span class="summary-score-result">${s.homeScore} – ${s.awayScore}</span>
-        <span class="summary-score-team summary-score-away">${s.awayTla} ${awayFlag}</span>
+        <span class="summary-score-away">${s.awayTla} ${awayFlag}</span>
         ${label ? `<span class="summary-score-label">${label}</span>` : ''}
       </div>`;
     }).join('');
