@@ -135,7 +135,7 @@ def main():
 
     prompt = f"""You are writing the daily update for "The Murphy/Donnelly Sweepstakes 2026" — a World Cup sweepstakes between mates called "The Avalanche".
 
-The scores are shown separately so don't list them. Write 2-3 short punchy paragraphs (max 120 words total) of sweepstake banter. Reference players by first name with specific jokes about how their teams did. Light roasting, funny. End with a sharp one-liner. Use 1-2 emojis max — don't overdo it.
+The scores are shown separately so don't list them. Write 2-3 short punchy paragraphs (max 120 words total) of sweepstake banter. Reference players by first name with specific jokes about how their teams did. Light roasting, funny. End with a sharp one-liner. Use emojis to punctuate key moments — 3-5 dotted through, not at the start of every line.
 
 TODAY'S RESULTS (for context, not to list):
 {results_text}
