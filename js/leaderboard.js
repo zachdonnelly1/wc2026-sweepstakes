@@ -270,7 +270,10 @@ async function renderDailySummary() {
     }).join('');
 
     document.getElementById('summary-scores').innerHTML = scoresHtml;
-    document.getElementById('summary-body').textContent = data.summary;
+    document.getElementById('summary-body').innerHTML = data.summary
+      .split(/\n\n+/)
+      .map(p => `<p style="margin:0 0 10px">${p.trim()}</p>`)
+      .join('');
     document.getElementById('daily-summary-section').style.display = 'block';
   } catch (_) {}
 }
