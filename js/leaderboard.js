@@ -3,6 +3,8 @@
 let refreshTimer;
 let lastMatches = [];
 let leaderboardExpanded = false;
+let allSummaries = [];
+let summaryIndex = 0;
 
 const PRIZE_META = {
   winner:          { icon: '🏆', label: 'TOURNAMENT WINNER' },
@@ -248,35 +250,55 @@ async function refresh(force = false) {
 async function renderDailySummary() {
   try {
     const res = await fetch(`data/daily-summary.json?t=${Date.now()}`);
-    const data = await res.json();
-    if (!data.summary) return;
-
-    const date = new Date(data.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-    document.getElementById('summary-game-day').textContent = `GAME DAY ${data.gameDay}`;
-    document.getElementById('summary-date').textContent = date;
-
-    // Scores section
-    const scoresHtml = (data.scores || []).map(s => {
-      const homeTeam = getTeam(s.homeId);
-      const awayTeam = getTeam(s.awayId);
-      const homeFlag = homeTeam?.flag || '';
-      const awayFlag = awayTeam?.flag || '';
-      const label = s.group || s.stage?.replace(/_/g, ' ') || '';
-      return `<div class="summary-score-row">
-        <span class="summary-score-home">${homeFlag} ${s.homeTla}</span>
-        <span class="summary-score-result">${s.homeScore} – ${s.awayScore}</span>
-        <span class="summary-score-away">${s.awayTla} ${awayFlag}</span>
-        ${label ? `<span class="summary-score-label">${label}</span>` : ''}
-      </div>`;
-    }).join('');
-
-    document.getElementById('summary-scores').innerHTML = scoresHtml;
-    document.getElementById('summary-body').innerHTML = data.summary
-      .split(/\n\n+/)
-      .map(p => `<p style="margin:0 0 10px">${p.trim()}</p>`)
-      .join('');
-    document.getElementById('daily-summary-section').style.display = 'block';
+    const loaded = await res.json();
+    if (!Array.isArray(loaded) || !loaded.length) return;
+    allSummaries = loaded;
+    summaryIndex = allSummaries.length - 1;
+    renderSummaryCard();
   } catch (_) {}
+}
+
+function renderSummaryCard() {
+  const data = allSummaries[summaryIndex];
+  if (!data) return;
+
+  const date = new Date(data.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('summary-game-day').textContent = 'GAME DAY ' + data.gameDay;
+  document.getElementById('summary-date').textContent = date;
+
+  const scoresHtml = (data.scores || []).map(s => {
+    const homeFlag = getTeam(s.homeId)?.flag || '';
+    const awayFlag = getTeam(s.awayId)?.flag || '';
+    const label = s.group || s.stage?.replace(/_/g, ' ') || '';
+    return `<div class="summary-score-row">
+      <span class="summary-score-home">${homeFlag} ${s.homeTla}</span>
+      <span class="summary-score-result">${s.homeScore} – ${s.awayScore}</span>
+      <span class="summary-score-away">${s.awayTla} ${awayFlag}</span>
+      ${label ? `<span class="summary-score-label">${label}</span>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('summary-scores').innerHTML = scoresHtml;
+
+  document.getElementById('summary-body').innerHTML = data.summary
+    .split(/\n\n+/)
+    .map(p => `<p style="margin:0 0 10px">${p.trim()}</p>`)
+    .join('');
+
+  const total = allSummaries.length;
+  const navHtml = total > 1 ? `
+    <div class="summary-nav">
+      <button class="summary-nav-btn" onclick="stepSummary(-1)" ${summaryIndex === 0 ? 'disabled' : ''}>← PREV</button>
+      <span class="summary-nav-pos">${summaryIndex + 1} / ${total}</span>
+      <button class="summary-nav-btn" onclick="stepSummary(1)" ${summaryIndex === total - 1 ? 'disabled' : ''}>NEXT →</button>
+    </div>` : '';
+  document.getElementById('summary-nav').innerHTML = navHtml;
+
+  document.getElementById('daily-summary-section').style.display = 'block';
+}
+
+function stepSummary(dir) {
+  summaryIndex = Math.max(0, Math.min(allSummaries.length - 1, summaryIndex + dir));
+  renderSummaryCard();
 }
 
 function toggleLeaderboard() {
