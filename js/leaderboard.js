@@ -2,6 +2,7 @@
 
 let refreshTimer;
 let lastMatches = [];
+let leaderboardExpanded = false;
 
 const PRIZE_META = {
   winner:          { icon: '🏆', label: 'TOURNAMENT WINNER' },
@@ -278,6 +279,16 @@ async function renderDailySummary() {
   } catch (_) {}
 }
 
+function toggleLeaderboard() {
+  leaderboardExpanded = !leaderboardExpanded;
+  const card = document.querySelector('.lb-card');
+  const btn  = document.getElementById('lb-toggle-btn');
+  if (!card || !btn) return;
+  const total = document.querySelectorAll('.lb-row--hidden, .lb-row').length;
+  card.classList.toggle('lb-expanded', leaderboardExpanded);
+  btn.textContent = leaderboardExpanded ? '▲ SHOW LESS' : `▼ SHOW ALL ${total}`;
+}
+
 function scheduleNextRefresh() {
   clearTimeout(refreshTimer);
   const live = API.isLiveOrImminent(lastMatches);
@@ -364,7 +375,8 @@ function renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes, teamStats
     const gdStr = sum.gd > 0 ? `+${sum.gd}` : `${sum.gd}`;
     const statStr = `${sum.wins}W ${gdStr}`;
 
-    return `<div class="lb-row ${rankCls}">
+    const hidden = rank >= 5 ? 'lb-row--hidden' : '';
+    return `<div class="lb-row ${rankCls} ${hidden}">
       <span class="lb-rank ${rank === 0 ? 'gold' : ''}">${rankNum}</span>
       <div class="lb-name-col">
         <span class="lb-name">${player.name.toUpperCase()}</span>
@@ -375,7 +387,16 @@ function renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes, teamStats
     </div>`;
   });
 
-  container.innerHTML = `<div class="card" style="padding:12px;margin-bottom:16px">${rows.join('')}</div>`;
+  const total = sorted.length;
+  const toggleLabel = leaderboardExpanded ? '▲ SHOW LESS' : '▼ SHOW ALL ' + total;
+  const toggleBtn = total > 5
+    ? `<button class="lb-toggle-btn" id="lb-toggle-btn" onclick="toggleLeaderboard()">${toggleLabel}</button>`
+    : '';
+
+  container.innerHTML = `<div class="card lb-card ${leaderboardExpanded ? 'lb-expanded' : ''}" style="padding:12px;margin-bottom:16px">
+    ${rows.join('')}
+    ${toggleBtn}
+  </div>`;
 }
 
 // ─── Predictions section ──────────────────────────────────────────────
