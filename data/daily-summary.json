@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "gameDay": 1,
+    "date": "2026-06-11",
+    "generated": "2026-06-11T21:47:08.573522+00:00",
+    "scores": [
+      {
+        "homeId": 769,
+        "homeName": "Mexico",
+        "homeTla": "MEX",
+        "homeScore": 2,
+        "awayId": 774,
+        "awayName": "South Africa",
+        "awayTla": "RSA",
+        "awayScore": 0,
+        "group": "Group A",
+        "stage": "GROUP_STAGE"
+      }
+    ],
+    "summary": "# \ud83c\udfc6 THE AVALANCHE | GAME DAY 1 UPDATE\n\nWell, well, well. Carole organized this entire sweepstake, picked Mexico in Tier 1, and they've already gone full fiesta mode against South Africa. Meanwhile, Zach's Tier 3 pick is already getting filleted 0-2. The Murphy/Donnelly gods have spoken, and they're *not* subtle \ud83d\ude24\n\nCarole's coasting into Day 2 with a W under her belt while Zach's sweating through the group stage like he's got \u20ac20 on a coin flip. South Africa showing absolutely zero creativity\u2014they looked like they were playing in slowmo. If this is Tier 3 form, the Underdog Hero prize is going to be COMPETITIVE \ud83d\udd25\n\n**One game in and Carole's already playing with house money. The rest of you? You're just fighting for scraps.**"
+  }
+]
