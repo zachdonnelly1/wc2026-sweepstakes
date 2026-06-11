@@ -108,37 +108,42 @@ def main():
         if results:
             player_lines.append(f"{p['name']}: {'; '.join(results)}")
 
-    # Match results text
+    # Build scores array for the frontend to render with flags
+    scores = []
+    for m in todays:
+        sc = m['score']['fullTime']
+        scores.append({
+            'homeId':    m['homeTeam']['id'],
+            'homeName':  m['homeTeam']['name'],
+            'homeTla':   m['homeTeam']['tla'],
+            'homeScore': sc['home'],
+            'awayId':    m['awayTeam']['id'],
+            'awayName':  m['awayTeam']['name'],
+            'awayTla':   m['awayTeam']['tla'],
+            'awayScore': sc['away'],
+            'group':     m.get('group', '').replace('GROUP_', 'Group '),
+            'stage':     m['stage'],
+        })
+
+    # Results text for prompt (no flags — those are in the scores section)
     result_lines = []
     for m in todays:
         sc = m['score']['fullTime']
-        w = m['score']['winner']
-        group = m.get('group', '').replace('GROUP_', 'Group ')
-        if w == 'HOME_TEAM':
-            suffix = f"({m['homeTeam']['name']} win)"
-        elif w == 'AWAY_TEAM':
-            suffix = f"({m['awayTeam']['name']} win)"
-        else:
-            suffix = "(Draw)"
-        line = f"{m['homeTeam']['name']} {sc['home']}-{sc['away']} {m['awayTeam']['name']} {suffix}"
-        if group:
-            line += f" — {group}"
-        result_lines.append(line)
-
+        result_lines.append(f"{m['homeTeam']['name']} {sc['home']}-{sc['away']} {m['awayTeam']['name']}")
     results_text = '\n'.join(result_lines)
-    players_text = '\n'.join(player_lines) if player_lines else "Draw not complete yet"
+    players_text = '\n'.join(player_lines) if player_lines else "No player assignments yet"
 
-    prompt = f"""You are writing the daily match summary for "The Murphy/Donnelly Sweepstakes 2026" — a World Cup sweepstakes between friends called "The Avalanche".
+    prompt = f"""You are writing the daily update for "The Murphy/Donnelly Sweepstakes 2026" — a World Cup sweepstakes between mates called "The Avalanche".
 
-Game Day {game_day} is done. Write a funny, punchy WhatsApp-style summary (4-5 short paragraphs, max 250 words). Like a mate recapping the day — specific, a bit of banter, light roasting welcome. Use first names only. End with a sharp one-liner.
+The scores are shown separately so don't list them. Write 2-3 short punchy paragraphs (max 120 words total) of sweepstake banter. Reference players by first name with specific jokes about how their teams did. Light roasting, funny. End with a sharp one-liner. Use 1-2 emojis max — don't overdo it.
 
-RESULTS — Game Day {game_day} ({latest}):
+TODAY'S RESULTS (for context, not to list):
 {results_text}
 
-SWEEPSTAKE IMPACT (how it affected our players):
+HOW IT HIT OUR PLAYERS:
 {players_text}
 
-PRIZES FOR CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 each | Underdog Hero (last T3 standing) €20 | Beautiful Loser (best group exit) €15 | Wooden Spoon (most goals conceded) €5"""
+PRIZES: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog Hero €20 | Beautiful Loser €15 | Wooden Spoon €5"""
 
     api_key = os.environ.get('ANTHROPIC_API_KEY', '')
     if not api_key:
@@ -173,6 +178,7 @@ PRIZES FOR CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 each 
         'gameDay': game_day,
         'date': latest,
         'generated': datetime.now(timezone.utc).isoformat(),
+        'scores': scores,
         'summary': text
     }
 
