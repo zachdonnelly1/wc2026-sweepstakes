@@ -462,6 +462,28 @@ canvas#wheel-canvas { border: 1px solid var(--border); max-width: 100%; }
   color: var(--yellow); text-align: right; white-space: nowrap;
 }
 
+/* ─── Daily Summary Scores ────────────────────────────────────────── */
+.summary-score-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.summary-score-row:last-child { border-bottom: none; }
+.summary-score-home { text-align: right; color: var(--text-primary); }
+.summary-score-away { text-align: left; color: var(--text-primary); }
+.summary-score-result {
+  font-family: var(--font-pixel); font-size: 10px;
+  color: var(--yellow); text-align: center; white-space: nowrap;
+}
+.summary-score-label {
+  font-size: 9px; color: var(--text-muted); white-space: nowrap;
+}
+
 /* ─── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .container { padding: 0 14px; }
