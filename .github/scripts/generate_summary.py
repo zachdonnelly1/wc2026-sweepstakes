@@ -179,8 +179,8 @@ PRIZE CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog
             resp = json.loads(r.read())
         text = resp['content'][0]['text']
     except urllib.error.HTTPError as e:
-        print(f"Claude API error {e.code}: {e.read().decode()}")
-        sys.exit(1)
+        print(f"Claude API error {e.code}: {e.read().decode()} — skipping summary, scores will still update")
+        return
 
     existing.append({
         'gameDay': game_day,
