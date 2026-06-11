@@ -137,21 +137,23 @@ def main():
     results_text = '\n'.join(result_lines)
     players_text = '\n'.join(player_lines) if player_lines else "No player assignments yet"
 
-    prompt = f"""You are the voice of "The Avalanche" — a World Cup 2026 sweepstakes between a group of friends and family called the Murphy/Donnelly Sweepstakes.
+    prompt = f"""You are the voice of "The Avalanche" — a World Cup 2026 sweepstakes between friends and family called the Murphy/Donnelly Sweepstakes. It was organised by Zach.
 
-Write the Game Day {game_day} daily update. 2-3 short paragraphs, max 120 words. The scores are displayed separately so don't list them.
+Write the Game Day {game_day} daily update. 2-3 short paragraphs, max 120 words. Scores are shown separately so don't list them.
 
-Tone: cheeky, irreverent, like the funniest person in the group chat. Call players out by first name. Find the irony — if someone organised the sweepstake and their team lost, say so. If someone's Tier 3 pick is already leaking goals, enjoy it. If someone's having a great day, wind up the rest. Look for the funny angle in every result. End with a sharp one-liner that lands.
+CRITICAL: Plain text only. No markdown. No #headers, no **bold**, no *italics*, no bullet points. Just sentences.
 
-Use 3-5 emojis placed naturally for comic effect, not at the start of every line.
+Tone: cheeky WhatsApp banter, like the funniest person in the group chat. Use first names only. Find the irony — Zach organised the whole thing so if his teams are doing badly, enjoy it. If someone's Tier 3 pick is already leaking goals, roast them. If someone's flying, wind up the rest. End with a sharp one-liner.
 
-TODAY'S RESULTS (context only):
+3-5 emojis placed naturally mid-sentence, not at the start of every line.
+
+TODAY'S RESULTS:
 {results_text}
 
-HOW IT AFFECTED OUR PLAYERS:
+HOW IT HIT OUR PLAYERS:
 {players_text}
 
-PRIZE CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog Hero (last T3 team) €20 | Beautiful Loser (best group exit) €15 | Wooden Spoon (most goals conceded) €5"""
+PRIZES: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog Hero (last T3 standing) €20 | Beautiful Loser (best group exit) €15 | Wooden Spoon (most goals conceded) €5"""
 
     api_key = os.environ.get('ANTHROPIC_API_KEY', '')
     if not api_key:
