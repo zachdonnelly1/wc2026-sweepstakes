@@ -23,10 +23,15 @@ jobs:
             "https://api.football-data.org/v4/competitions/2000/matches" \
             -o data/matches.json
 
+      - name: Generate daily summary if game day complete
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 .github/scripts/generate_summary.py
+
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/matches.json
+          git add data/matches.json data/daily-summary.json
           git diff --staged --quiet || git commit -m "chore: update match data [skip ci]"
           git push
