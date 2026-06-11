@@ -35,16 +35,20 @@ def main():
 
     latest = completed[-1]
 
-    # Skip if summary already exists for this date
+    # Load existing summaries array
     path = 'data/daily-summary.json'
+    existing = []
     if os.path.exists(path):
         with open(path) as f:
             try:
-                if json.load(f).get('date') == latest:
-                    print(f"Summary already exists for {latest}")
-                    return
+                data = json.load(f)
+                existing = data if isinstance(data, list) else []
             except Exception:
                 pass
+
+    if any(s.get('date') == latest for s in existing):
+        print(f"Summary already exists for {latest}")
+        return
 
     game_day = sorted(by_date.keys()).index(latest) + 1
     todays = by_date[latest]
@@ -178,16 +182,16 @@ PRIZE CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog
         print(f"Claude API error {e.code}: {e.read().decode()}")
         sys.exit(1)
 
-    summary = {
+    existing.append({
         'gameDay': game_day,
         'date': latest,
         'generated': datetime.now(timezone.utc).isoformat(),
         'scores': scores,
         'summary': text
-    }
+    })
 
     with open(path, 'w') as f:
-        json.dump(summary, f, indent=2)
+        json.dump(existing, f, indent=2)
 
     print(f"Game Day {game_day} summary saved ({latest})")
 
