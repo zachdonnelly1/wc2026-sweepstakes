@@ -23,6 +23,11 @@ jobs:
             "https://api.football-data.org/v4/competitions/2000/matches" \
             -o data/matches.json
 
+      - name: Merge live and finished scores
+        env:
+          FOOTBALL_API_TOKEN: ${{ secrets.FOOTBALL_API_TOKEN }}
+        run: python3 .github/scripts/merge_matches.py
+
       - name: Generate daily summary if game day complete
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
