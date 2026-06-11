@@ -230,6 +230,7 @@ async function refresh(force = false) {
 
     renderStats(matches, teamStatus, playerMap, teamStats);
     renderLeaderboard(playerMap, teamStatus, prizeTotals, prizes, teamStats);
+    renderDailySummary();
     renderPayoutsTimeline(prizes);
     checkAndShowPayoutBanner(prizes);
     renderPredictions(predictions, specialPrizes);
@@ -241,6 +242,20 @@ async function refresh(force = false) {
     document.getElementById('error-banner').style.display = 'block';
   }
   document.getElementById('refresh-btn').disabled = false;
+}
+
+async function renderDailySummary() {
+  try {
+    const res = await fetch(`data/daily-summary.json?t=${Date.now()}`);
+    const data = await res.json();
+    if (!data.summary) return;
+    const section = document.getElementById('daily-summary-section');
+    const date = new Date(data.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('summary-game-day').textContent = `GAME DAY ${data.gameDay}`;
+    document.getElementById('summary-date').textContent = date;
+    document.getElementById('summary-body').textContent = data.summary;
+    section.style.display = 'block';
+  } catch (_) {}
 }
 
 function scheduleNextRefresh() {
