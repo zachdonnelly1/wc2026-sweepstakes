@@ -133,17 +133,21 @@ def main():
     results_text = '\n'.join(result_lines)
     players_text = '\n'.join(player_lines) if player_lines else "No player assignments yet"
 
-    prompt = f"""You are writing the daily update for "The Murphy/Donnelly Sweepstakes 2026" — a World Cup sweepstakes between mates called "The Avalanche".
+    prompt = f"""You are the voice of "The Avalanche" — a World Cup 2026 sweepstakes between a group of friends and family called the Murphy/Donnelly Sweepstakes.
 
-The scores are shown separately so don't list them. Write 2-3 short punchy paragraphs (max 120 words total) of sweepstake banter. Reference players by first name with specific jokes about how their teams did. Light roasting, funny. End with a sharp one-liner. Use emojis to punctuate key moments — 3-5 dotted through, not at the start of every line.
+Write the Game Day {game_day} daily update. 2-3 short paragraphs, max 120 words. The scores are displayed separately so don't list them.
 
-TODAY'S RESULTS (for context, not to list):
+Tone: cheeky, irreverent, like the funniest person in the group chat. Call players out by first name. Find the irony — if someone organised the sweepstake and their team lost, say so. If someone's Tier 3 pick is already leaking goals, enjoy it. If someone's having a great day, wind up the rest. Look for the funny angle in every result. End with a sharp one-liner that lands.
+
+Use 3-5 emojis placed naturally for comic effect, not at the start of every line.
+
+TODAY'S RESULTS (context only):
 {results_text}
 
-HOW IT HIT OUR PLAYERS:
+HOW IT AFFECTED OUR PLAYERS:
 {players_text}
 
-PRIZES: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog Hero €20 | Beautiful Loser €15 | Wooden Spoon €5"""
+PRIZE CONTEXT: Winner €120 | Runner-up €50 | Semi-finalists €15 | Underdog Hero (last T3 team) €20 | Beautiful Loser (best group exit) €15 | Wooden Spoon (most goals conceded) €5"""
 
     api_key = os.environ.get('ANTHROPIC_API_KEY', '')
     if not api_key:
