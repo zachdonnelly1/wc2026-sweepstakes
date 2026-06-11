@@ -249,12 +249,29 @@ async function renderDailySummary() {
     const res = await fetch(`data/daily-summary.json?t=${Date.now()}`);
     const data = await res.json();
     if (!data.summary) return;
-    const section = document.getElementById('daily-summary-section');
+
     const date = new Date(data.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
     document.getElementById('summary-game-day').textContent = `GAME DAY ${data.gameDay}`;
     document.getElementById('summary-date').textContent = date;
+
+    // Scores section
+    const scoresHtml = (data.scores || []).map(s => {
+      const homeTeam = getTeam(s.homeId);
+      const awayTeam = getTeam(s.awayId);
+      const homeFlag = homeTeam?.flag || '';
+      const awayFlag = awayTeam?.flag || '';
+      const label = s.group || s.stage?.replace('_', ' ') || '';
+      return `<div class="summary-score-row">
+        <span class="summary-score-team summary-score-home">${homeFlag} ${s.homeTla}</span>
+        <span class="summary-score-result">${s.homeScore} – ${s.awayScore}</span>
+        <span class="summary-score-team summary-score-away">${s.awayTla} ${awayFlag}</span>
+        ${label ? `<span class="summary-score-label">${label}</span>` : ''}
+      </div>`;
+    }).join('');
+
+    document.getElementById('summary-scores').innerHTML = scoresHtml;
     document.getElementById('summary-body').textContent = data.summary;
-    section.style.display = 'block';
+    document.getElementById('daily-summary-section').style.display = 'block';
   } catch (_) {}
 }
 
