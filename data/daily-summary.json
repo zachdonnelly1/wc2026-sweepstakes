@@ -50,5 +50,49 @@
       }
     ],
     "summary": "The Avalanche - Game Day 2 Update\n\nWell well well, Rory's Czechia just got absolutely flattened by South Korea \ud83d\udd25 and honestly mate, it could've been worse. Meanwhile Fiona and Lynne are locked in a beautiful stalemate with Canada and Bosnia playing like they've got a handshake agreement to bore everyone senseless. At least they both got a point, which is more than Rory can say. Ian's sitting pretty with South Korea's win, which means Zach's sweepstakes is already paying out to someone other than the organiser \ud83d\ude02 classic move lad.\n\nThe group stage is shaping up nicely for chaos and we're only two games deep. Rory's sweating, the draw merchants are celebrating draws like they won the lottery, and Ian's quietly accumulating wins like he knew something we didn't. There's still plenty of football to play but someone's Tier 3 fantasy is already looking like a Tier 3 disaster.\n\nZach organised this whole thing just to watch his own teams crumble, apparently."
+  },
+  {
+    "gameDay": 3,
+    "date": "2026-06-13",
+    "generated": "2026-06-14T03:40:38.470068+00:00",
+    "scores": [
+      {
+        "homeId": 771,
+        "homeName": "United States",
+        "homeTla": "USA",
+        "homeScore": 4,
+        "awayId": 761,
+        "awayName": "Paraguay",
+        "awayTla": "PAR",
+        "awayScore": 1,
+        "group": "Group D",
+        "stage": "GROUP_STAGE"
+      },
+      {
+        "homeId": 8030,
+        "homeName": "Qatar",
+        "homeTla": "QAT",
+        "homeScore": 1,
+        "awayId": 788,
+        "awayName": "Switzerland",
+        "awayTla": "SUI",
+        "awayScore": 1,
+        "group": "Group B",
+        "stage": "GROUP_STAGE"
+      },
+      {
+        "homeId": 764,
+        "homeName": "Brazil",
+        "homeTla": "BRA",
+        "homeScore": 1,
+        "awayId": 815,
+        "awayName": "Morocco",
+        "awayTla": "MAR",
+        "awayScore": 1,
+        "group": "Group C",
+        "stage": "GROUP_STAGE"
+      }
+    ],
+    "summary": "The Avalanche rolls on and the cracks are showing already \ud83d\ude2c. Ian's flying high with USA's demolition of Paraguay while poor Paul watched his Tier 2 pick get absolutely battered 4-1, which is genuinely embarrassing. Meanwhile Daire, Derek and Lynne are all sitting pretty with draws from their Tier 1 picks, proving once again that playing it safe is the coward's way to glory. Zach's sitting back watching his masterpiece unfold and honestly we should be worried about whatever chaos he's quietly plotting.\n\nAna's Tier 3 Qatar draw is holding up better than expected which means the sweepstakes gods are feeling generous today \ud83c\udfaa. The real story though? Paul's Paraguay meltdown has him already eyeing up the Beautiful Loser prize before we've even kicked off properly. At this rate he'll be writing acceptance speeches by next week. Brazil and Morocco's stalemate means Daire and Derek are splitting the neutrals' vote, which is delightfully pointless for both of them.\n\nWe're three games in and Ian's already got one foot on the podium \u2705. Everyone else is treading water except Paul who's treading something else entirely. See you tomorrow for more chaos."
   }
 ]
