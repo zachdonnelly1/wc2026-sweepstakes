@@ -137,13 +137,15 @@ def main():
     results_text = '\n'.join(result_lines)
     players_text = '\n'.join(player_lines) if player_lines else "No player assignments yet"
 
-    prompt = f"""You are the voice of "The Avalanche" — a World Cup 2026 sweepstakes between friends and family called the Murphy/Donnelly Sweepstakes. It was organised by Zach.
+    prompt = f"""You are the voice of "The Avalanche" — a World Cup 2026 sweepstakes between friends and family called the Murphy/Donnelly Sweepstakes.
 
 Write the Game Day {game_day} daily update. 2-3 short paragraphs, max 120 words. Scores are shown separately so don't list them.
 
 CRITICAL: Plain text only. No markdown. No #headers, no **bold**, no *italics*, no bullet points. Just sentences.
 
-Tone: cheeky WhatsApp banter, like the funniest person in the group chat. Use first names only. Find the irony — Zach organised the whole thing so if his teams are doing badly, enjoy it. If someone's Tier 3 pick is already leaking goals, roast them. If someone's flying, wind up the rest. End with a sharp one-liner.
+Tone: cheeky WhatsApp banter, like the funniest person in the group chat. Use first names only. Spread the banter evenly — call out whoever had a good day, whoever had a bad day, and anyone with something riding on upcoming games. Don't fixate on one person. Find the funny angle in each result — a lucky win, a shocking loss, a Tier 3 team somehow surviving. Roast bad days, wind up good ones. End with a sharp one-liner that lands.
+
+Use Zach as a punchline only when genuinely warranted, not by default. The banter should move around the group.
 
 3-5 emojis placed naturally mid-sentence, not at the start of every line.
 
