@@ -125,7 +125,7 @@ def main():
             'awayName':  m['awayTeam']['name'],
             'awayTla':   m['awayTeam']['tla'],
             'awayScore': sc['away'],
-            'group':     m.get('group', '').replace('GROUP_', 'Group '),
+            'group':     (m.get('group') or '').replace('GROUP_', 'Group '),
             'stage':     m['stage'],
         })
 
